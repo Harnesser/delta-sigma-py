@@ -1,0 +1,17 @@
+# CHANGELOG
+
+Delta-Sigma ADC Model changes
+
+## [Unreleased]
+
+## [0.0.1] - 2018-11-19
+### Added
+- Waveform plots
+- FFT of bitstream
+- Slider for input amplitude
+- Slider for input freqency cycles per FFT
+- Reset button to reload modulator model modules
+- Model: 1st-Order
+- Model: 2nd-Order
+- Model: MASH-1-1
+- Model: MASH-2-1
