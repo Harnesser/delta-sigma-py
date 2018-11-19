@@ -77,9 +77,14 @@ def update(val):
     # FFT
     spec_data = data[-1][-N:]
     assert( len(spec_data) == N )
-    ax3.magnitude_spectrum(spec_data, Fs=1.0/dt, scale='dB', linewidth=0.4)
-    ax3.set_ylim(-100, 0)
-
+    ax3.magnitude_spectrum(
+        spec_data,
+        Fs=1.0/dt,
+        window = np.ones(spec_data.shape),
+        scale='dB',
+        linewidth=0.4)
+    ax3.set_ylim(-140, 0)
+    ax3.set_xscale('log')
     # z
     x1 = np.arange(len(spec_data))
     ax4.step(x1, spec_data)
