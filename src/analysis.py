@@ -10,6 +10,8 @@ import modulators
 
 N = 2048
 R = 3.0
+OSR = 32
+
 fig = plt.figure("Delta Sigma")
 
 # set up time series array
@@ -32,6 +34,31 @@ axreset = plt.axes([0.8, 0.025, 0.1, 0.04])
 freq_slider = Slider(axfreq, 'Freq', 1, 31, valinit=3)
 amp_slider = Slider(axamp, 'Amp', 0.1, 1.0, valinit=0.8)
 button = Button(axreset, 'Reset', color=axcolor, hovercolor='0.975')
+
+def _snr(mg_spec, mg_freqs, osr):
+    """ Get SNR in basband """
+    # input is single-sided
+    # assume coherent input signal so power in 1 bin
+    N = len(mg_spec)
+    print(N)
+    bwi = int(np.ceil(N/osr))
+
+    boi_spec = mg_spec[:bwi]
+    total_power = boi_spec ** 2.0
+
+    # signal
+    signal_index = np.argmax(total_power)
+    signal_power = total_power[signal_index]
+
+    # noise
+    total_power[signal_index] = 0.0
+    noise_power = sum(total_power)
+
+    # SNR
+    f_bw = mg_freqs[bwi]
+    snr = 20.0 * np.log10(signal_power/noise_power)
+    return f_bw, snr
+
 
 def update(val):
 
@@ -77,7 +104,7 @@ def update(val):
     # FFT
     spec_data = data[-1][-N:]
     assert( len(spec_data) == N )
-    ax3.magnitude_spectrum(
+    (ms_spec, ms_freqs, _ ) = ax3.magnitude_spectrum(
         spec_data,
         Fs=1.0/dt,
         window = np.ones(spec_data.shape),
@@ -85,6 +112,12 @@ def update(val):
         linewidth=0.4)
     ax3.set_ylim(-140, 0)
     ax3.set_xscale('log')
+
+    f_bw, snr = _snr(ms_spec, ms_freqs, OSR)
+    ax3.axvline(x=f_bw, alpha=0.75, color='lightgrey', zorder=0)
+    title = "SNR = {:0.2f}dB, OSR = {}".format(snr, OSR)
+    ax3.set_title(title)
+
     # z
     x1 = np.arange(len(spec_data))
     ax4.step(x1, spec_data)

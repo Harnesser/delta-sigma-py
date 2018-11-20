@@ -11,6 +11,7 @@ Delta-Sigma ADC Model changes
 - Scaled existing models so that internal 'analog' node
   ranges are kept within the -1.0 to 1.0 range
 - Plot FFT with no windowing, and with log x-scale
+- Calculate SNR within baseband and add to title of FFT
 
 ## [0.0.1] - 2018-11-19
 ### Added
